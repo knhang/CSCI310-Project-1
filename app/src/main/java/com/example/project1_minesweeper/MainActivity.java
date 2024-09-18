@@ -6,7 +6,6 @@ import android.widget.GridLayout;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         cell_tvs = new ArrayList<TextView>();
         gridState = new int[ROW_COUNT][COLUMN_COUNT];
 
-        GridLayout grid = (GridLayout) findViewById(R.id.gridLayout01);
+        GridLayout grid = findViewById(R.id.gridLayout01);
         grid.setColumnCount(COLUMN_COUNT);
         grid.setRowCount(ROW_COUNT);
         for (int i = 0; i<ROW_COUNT; i++) {
