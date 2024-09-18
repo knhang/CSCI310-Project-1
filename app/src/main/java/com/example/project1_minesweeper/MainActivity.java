@@ -15,6 +15,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
     private static final int COLUMN_COUNT = 10;
     private static final int ROW_COUNT = 12;
+    private GameActivity gameActivity;
 
     // save the TextViews of all cells in an array, so later on,
     // when a TextView is clicked, we know which cell it is
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        gameActivity = new GameActivity();
         cell_tvs = new ArrayList<TextView>();
         gridState = new int[ROW_COUNT][COLUMN_COUNT];
 
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 tv.setTextSize( 16 );//dpToPixel(32) );
                 tv.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
                 tv.setTextColor(Color.GRAY);
-                tv.setBackgroundColor(Color.GRAY);
+                tv.setBackgroundColor(Color.parseColor("lime"));
                 tv.setOnClickListener(this::onClickTV);
 
                 GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
@@ -96,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Finds all mines around a cell
     private int countMines(int row, int col){
-        // find the mines first and then use the direction index to find
         int[][] directions = {
                 {-1, 0},   // up
                 {1, 0},    // down
@@ -128,26 +130,36 @@ public class MainActivity extends AppCompatActivity {
     public void onClickTV(View view){
         TextView tv = (TextView) view;
         int n = findIndexOfCellTextView(tv);
-        int i = n / ROW_COUNT;
+        int i = n / COLUMN_COUNT;
         int j = n % COLUMN_COUNT;
 
         // Display bomb
-        if (gridState[i][j] == -1){
-            tv.setText(R.string.mine);
-            // Handle game over and result activity page
+        if (gameActivity.currMode()){ // If the current icon/mode is set to the pickaxe
+            if (gridState[i][j] == -1){
+                tv.setText(R.string.mine);
+                // Handle game over and result activity page
+            }
+            else if (gridState[i][j] > 0){ // If its just a normal grid with bombs nearby
+                tv.setText(String.valueOf(gridState[i][j]));
+                tv.setBackgroundColor(Color.LTGRAY);
+                tv.setTextColor(Color.BLACK);
+            }
+            else if (gridState[i][j] == 0){
+                // Display adjacent cells!
+                tv.setText("");
+                tv.setBackgroundColor(Color.LTGRAY);
+                displayAdjCells(i, j);
+                // Hello.
+            }
         }
-        else if (gridState[i][j] > 0){ // If its just a normal grid
-            tv.setText(String.valueOf(gridState[i][j]));
-        }
-        else{
-            // Display adjacent cells!
-            tv.setText("");
-            displayAdjCells(i, j);
-            // Hello.
+        else{ // The current icon is a flag and we are flagging where the bomb could be
+            tv.setText(R.string.flag);
+            gameActivity.updateFlagCount(-1);
         }
 
     }
 
+    // Displays all cells around a cell that has 0 mines nearby
     private void displayAdjCells(int row, int col){
         int[][] directions = {
                 {-1, 0},   // up
@@ -165,10 +177,22 @@ public class MainActivity extends AppCompatActivity {
             int newCol = col + dir[1];
 
             if (newRow >= 0 && newRow < ROW_COUNT && newCol >= 0 && newCol < COLUMN_COUNT) {
-                int n = newRow * ROW_COUNT + newCol;
-
+                // check if the grid im trying to reveal hasn't been revealed alr
+                int n = newRow * COLUMN_COUNT + newCol;
                 TextView tv = cell_tvs.get(n);
-                tv.setText("");
+                if (tv.getCurrentTextColor() == Color.LTGRAY){ // It was alr revealed, don't overwrite
+                    continue;
+                }
+                if (gridState[newRow][newCol] > 0){
+                    tv.setText(String.valueOf(gridState[newRow][newCol]));
+                    tv.setTextColor(Color.BLACK);
+                    tv.setBackgroundColor(Color.LTGRAY);
+                }
+                else{
+                    tv.setText("");
+                    tv.setBackgroundColor(Color.LTGRAY);
+                }
+
             }
         }
     }
