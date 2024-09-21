@@ -208,16 +208,17 @@ public class MainActivity extends AppCompatActivity {
 
         // Only reveal adjacent cells if there are no adjacent mines
         if (adjacentMines == 0) {
-            revealSpecificNeighbors(row, col);
+            revealNeighbors(row, col);
         }
     }
 
-    private void revealSpecificNeighbors(int row, int col) {
+    private void revealNeighbors(int row, int col) {
         int[][] directions = {
                 {-1, 0}, {1, 0}, {0, -1}, {0, 1},
                 {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
         };
 
+        // Searches all 8 adjacent cells
         for (int[] dir : directions) {
             int newRow = row + dir[0];
             int newCol = col + dir[1];
