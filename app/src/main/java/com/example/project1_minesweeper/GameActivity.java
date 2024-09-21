@@ -1,75 +1,68 @@
 package com.example.project1_minesweeper;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Handler;
-import android.widget.GridLayout;
-
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
-
-public class GameActivity extends AppCompatActivity{
+public class GameActivity{
     private boolean running = false; // If the timer is running, should only be switched to true when lose/win
-    private boolean isPickaxe = true; // true = pickaxe, false = flag
-    private int flagCount = 4;
-    private TextView flagCounterText;
-    private TextView timerText;
-    private TextView toggleButton;
+    private final Handler handler = new Handler();
     private int clock = 0;
+    private Runnable timerRunnable; // Runnable for timer logic
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    private boolean isPickaxe = true;// true = pickaxe, false = flag
+    private int flagCount = 4;
 
-        if (savedInstanceState != null) {
-            clock = savedInstanceState.getInt("clock");
-            running = savedInstanceState.getBoolean("running");
-        }
+    private final TextView flagCounterText;
+    private final TextView timerText;
+    private final TextView toggleButton;
 
-        flagCounterText = findViewById(R.id.flagCount);
-        timerText = findViewById(R.id.timer);
-        toggleButton = findViewById(R.id.toggleIcons);
+    public GameActivity(TextView flagCounterText, TextView timerText, TextView toggleButton) {
+        this.flagCounterText = flagCounterText;
+        this.timerText = timerText;
+        this.toggleButton = toggleButton;
 
+        // Initialize the flag counter
         flagCounterText.setText(String.valueOf(flagCount));
 
-        runTimer();
-        toggleButton.setOnClickListener(v -> togglePickaxeFlag());
 
+
+        // Set up toggle button listener
+        toggleButton.setOnClickListener(v -> togglePickaxeFlag());
     }
 
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("clock", clock);
-        savedInstanceState.putBoolean("running", running);
+    public void stopTimer() {
+        running = false; // Stop the timer from incrementing
+        handler.removeCallbacks(timerRunnable); // Remove the timer callbacks
+    }
+
+    public void startTimer(){
+        running = true;
+        runTimer();
     }
 
     private void runTimer() {
-        final Handler handler = new Handler();
-
-        handler.post(new Runnable() {
+        timerRunnable = new Runnable() {
             @Override
             public void run() {
-                int hours =clock/3600;
-                int minutes = (clock%3600) / 60;
-                int seconds = clock%60;
-                String time = String.format("%d:%02d:%02d", hours, minutes, seconds);
-                timerText.setText(time);
+                // Display the time in seconds
+                String time = String.format("%02d", clock);
+                timerText.setText(time); // Update the TextView
 
                 if (running) {
-                    clock++;
+                    clock++; // Increment the seconds
                 }
+
+                // Run again after 1000ms (1 second)
                 handler.postDelayed(this, 1000);
             }
-        });
+        };
+
+        handler.post(timerRunnable); // Start the timer
     }
 
+    public int getTotalTime(){
+        return clock;
+    }
     public void updateFlagCount(int count) {
         flagCount += count;
         flagCounterText.setText(String.valueOf(flagCount));

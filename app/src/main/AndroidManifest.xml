@@ -21,6 +21,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ResultActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.RESULT" />
+
+                <category android:name="android.intent.category.SECONDARY_HOME" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

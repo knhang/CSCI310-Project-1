@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10sp"
             android:gravity="center"
-            android:text="4"
+            android:text=""
             android:textAlignment="center"
             android:textSize="20sp" />
 
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginLeft="10sp"
-            android:text="20"
+            android:text=""
             android:textAlignment="center"
             android:textSize="20sp"
             />
@@ -89,7 +89,7 @@
         android:id="@+id/bottomBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="40dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="16dp"
@@ -103,9 +103,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pick"
-            android:textSize="30sp"
             android:textAlignment="center"
-            />
+            android:textSize="30sp" />
 
     </LinearLayout>
 
