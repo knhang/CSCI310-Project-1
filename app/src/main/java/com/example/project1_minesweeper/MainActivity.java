@@ -140,14 +140,14 @@ public class MainActivity extends AppCompatActivity {
 
     // Function that displays the bomb, or # of adj bombs nearby. Uses a listener
     public void onClickTV(View view){
-        if (gameFinished){
-            // check if the grids are the same...
-            showResult(gameResult);
-            return;
-        }
         if (!gameStarted){
             gameActivity.startTimer();
             gameStarted = true;
+        }
+
+        if (gameFinished){
+            // check if the grids are the same...
+            showResult(gameResult);
             return;
         }
 
@@ -171,7 +171,9 @@ public class MainActivity extends AppCompatActivity {
 
             Boolean gameStatus = checkWinCondition();
             if (gameStatus){
-                showResult(true);
+                gameFinished = true;
+                gameResult = true;
+                gameActivity.stopTimer();
             }
         }
         else { // The current icon is a flag and we are flagging where the bomb could be
@@ -242,8 +244,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Boolean checkWinCondition() {
         int currRevealed = 0;
-        for (TextView tv : cell_tvs){
-            if (tv.getSolidColor() == Color.LTGRAY){
+        for (TextView tv : cell_tvs) {
+            if (tv.getBackground() instanceof ColorDrawable && ((ColorDrawable) tv.getBackground()).getColor() == Color.LTGRAY) {
                 currRevealed++;
             }
         }
